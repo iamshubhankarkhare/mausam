@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { TextField } from "@material-ui/core";
+import "./App.css";
+import  Load from './Load'
 
-import WeatherBox from './WeatherBox'
+import WeatherBox from "./WeatherBox";
 
 function App() {
   const [query, setQuery] = useState("");
@@ -23,27 +25,38 @@ function App() {
       }
     }
   };
+  const bg = () => {
+    if (typeof weather.main != "undefined") {
+      if (weather.main.temp > 16) {
+        return "app warm";
+      } else return "app cold";
+    }
+    return "app cold animated infinite bounce delay-2s";
+  };
 
   return (
-    <main>
-      <div className="search-box">
-        <TextField
-          id="outlined-basic"
-          label="City"
-          variant="outlined"
-          className="search-bar"
-          placeholder="Search your city..."
-          onChange={(e) => setQuery(e.target.value)}
-          value={query}
-          onKeyPress={apiCall}
-        />
-      </div>
-      {typeof weather.main != "undefined" ? (
-       <WeatherBox weather={weather}></WeatherBox>
-      ) : (
-        ""
-      )}
-    </main>
+    <div className={bg()}>
+      <main>
+        <div className="search-box">
+          <input
+          color="primary"
+            id="outlined-basic"
+            label="City"
+            variant="filled"
+            className="search-bar"
+            placeholder="Search your city..."
+            onChange={(e) => setQuery(e.target.value)}
+            value={query}
+            onKeyPress={apiCall}
+          />
+        </div>
+        {typeof weather.main != "undefined" ? (
+          <WeatherBox weather={weather}></WeatherBox>
+        ) : (
+          <Load></Load>
+        )}
+      </main>
+    </div>
   );
 }
 
