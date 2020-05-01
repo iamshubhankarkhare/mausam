@@ -1,70 +1,50 @@
-import React, { Component } from 'react'
-import Title from './components/Title'
-import Form from './components/Forms'
-import Weather from './components/Weather'
-import './App.css'
+import React, { useState } from "react";
+import axios from "axios";
+import { TextField } from "@material-ui/core";
 
-const API_KEY="661c692c8e2aca946fb2c3cf990e5bba"
+import WeatherBox from './WeatherBox'
 
-export default class App extends Component {
-  state={
-    temperature:undefined,
-    city:undefined,
-    country:undefined,
-    humidity:undefined,
-    description:undefined,
-    error:undefined
+function App() {
+  const [query, setQuery] = useState("");
+  const [weather, setWeather] = useState({});
 
+  const apiCall = async (evt) => {
+    if (evt.key === "Enter") {
+      const res = await axios.get(
+        `https://api.openweathermap.org/data/2.5/weather?q=${query}&units=metric&appid=37337e92cace3dbf81be18bc19e29fb8`
+      );
+      try {
+        setWeather(res.data);
+        setQuery("");
+        console.log(res.data);
+        console.log(weather);
+      } catch (error) {
+        console.error();
+      }
+    }
+  };
 
-  }
-
-  getWeather= async(e)=>{
-    e.preventDefault()
-    const city=e.target.elements.city.value
-    const country=e.target.elements.country.value
-
-    const api_call= await fetch(`http://api.openweathermap.org/data/2.5/weather?q=${city},${country}&appid=${API_KEY}`);
-   const data=await api_call.json()
-   if(city && country){
-     console.log(data)
-    this.setState({
-      temperature: data.main.temp,
-      city: data.name,
-      country: data.sys.country,
-      humidity: data.main.humidity,
-      description: data.weather[0].description,
-      error:""
-    }) 
-   }else{
-    this.setState({
-      temperature: undefined,
-      city: undefined,
-      country: undefined,
-      humidity: undefined,
-      description: undefined,
-      error:"Please enter the values"
-    }) 
-
-   }
-
-  }
-
-
-  render() {
-    return (
-      <div>
-        <Title />
-        <Form getWeather={this.getWeather}/>
-        <Weather 
-        temperature={this.state.temperature}
-        city={this.state.city}
-        country={this.state.country}
-        humidity={this.state.humidity}
-        description={this.state.description}
-        error={this.state.error}
+  return (
+    <main>
+      <div className="search-box">
+        <TextField
+          id="outlined-basic"
+          label="City"
+          variant="outlined"
+          className="search-bar"
+          placeholder="Search your city..."
+          onChange={(e) => setQuery(e.target.value)}
+          value={query}
+          onKeyPress={apiCall}
         />
-
       </div>
-    )
-  }
+      {typeof weather.main != "undefined" ? (
+       <WeatherBox weather={weather}></WeatherBox>
+      ) : (
+        ""
+      )}
+    </main>
+  );
 }
+
+export default App;
