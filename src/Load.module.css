@@ -27,7 +27,16 @@
     width: 80vw !important;
     height: 55vh !important;
   }
-  .box h1{
-      font-size: xx-large;
+  .box h1 {
+    font-size: xx-large;
+  }
+}
+@media (max-height:768px) {
+  .box h1 {
+    font-size: x-large;
+  }
+  .box h2 {
+    padding: 2%;
+    font-size: medium;
   }
 }
